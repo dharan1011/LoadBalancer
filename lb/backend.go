@@ -33,7 +33,7 @@ func (b *Backend) HealthCheck() bool {
 	timeout := time.Second * 2
 	conn, err := net.DialTimeout("tcp", b.URL.Host, timeout)
 	if err != nil {
-		log.Println("Host unreachable", b.URL.Host)
+		log.Printf("Host unreachable : %s\n", b.URL.Host)
 		return false
 	}
 	defer conn.Close()

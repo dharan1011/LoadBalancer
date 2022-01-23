@@ -1,6 +1,7 @@
 package lb
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 	"time"
@@ -27,13 +28,14 @@ func (sp *ServerPoolManager) GetServerPool() []*Backend {
 	return sp.backends
 }
 
-func (sp *ServerPoolManager) poolHealthCheck() {
+func (sp *ServerPoolManager) RunPoolHealthCheck() {
 	log.Println("Starting Backend Pool check")
 	for _, backend := range sp.backends {
 		if backend == nil {
 			continue
 		}
-		isBacknedAlive := backend.IsAlive()
+		fmt.Println(backend)
+		isBacknedAlive := backend.HealthCheck()
 		backend.SetAlive(isBacknedAlive)
 		var status string
 		if isBacknedAlive {
@@ -46,12 +48,12 @@ func (sp *ServerPoolManager) poolHealthCheck() {
 	log.Println("Backend Pool Check Completed")
 }
 
-func (sp *ServerPoolManager) RunPoolHealthCheck() {
+func (sp *ServerPoolManager) SchedulePoolHealthCheck() {
 	t := time.NewTicker(time.Minute * 2)
 	for {
 		select {
 		case <-t.C:
-			sp.poolHealthCheck()
+			sp.RunPoolHealthCheck()
 		}
 	}
 }

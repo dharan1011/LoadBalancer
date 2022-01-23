@@ -23,10 +23,12 @@ func (lb *LoadBalancer) handler(w http.ResponseWriter, r *http.Request) {
 	nextNode := lb.getNextBackendNode()
 	if nextNode != nil {
 		nextNode.ReveseProxy.ServeHTTP(w, r)
+	} else {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":  http.StatusInternalServerError,
+			"message": "service unavailable",
+		})
 	}
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "service unavailable",
-	})
 }
 
 func (lb *LoadBalancer) Run() {
@@ -35,6 +37,7 @@ func (lb *LoadBalancer) Run() {
 		Handler: http.HandlerFunc(lb.handler),
 	}
 	go lb.ServerPool.RunPoolHealthCheck()
+	go lb.ServerPool.SchedulePoolHealthCheck()
 	log.Printf("Starting Load Balancer [ID=%d] started. Listening on port %d", lb.id, lb.Port)
 	if err := loadBalancer.ListenAndServe(); err != nil {
 		panic(err)

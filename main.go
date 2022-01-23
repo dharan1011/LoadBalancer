@@ -9,10 +9,11 @@ import (
 )
 
 func main() {
-	url, err := url.Parse(fmt.Sprintf("%s:%d", "localhost", 8080))
+	url, err := url.Parse("http://localhost:8080")
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("URL : ", url.Host)
 	serverPool := lb.ServerPoolManager{}
 	serverPool.AddBackend(&lb.Backend{
 		URL:         url,
