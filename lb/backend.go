@@ -11,20 +11,20 @@ import (
 
 type Backend struct {
 	URL         *url.URL
-	Alive       bool
+	alive       bool
 	mutex       sync.RWMutex
 	ReveseProxy *httputil.ReverseProxy
 }
 
 func (b *Backend) SetAlive(alive bool) {
 	b.mutex.Lock()
-	b.Alive = alive
+	b.alive = alive
 	b.mutex.Unlock()
 }
 
 func (b *Backend) IsAlive() (alive bool) {
 	b.mutex.RLock()
-	alive = b.Alive
+	alive = b.alive
 	b.mutex.RUnlock()
 	return
 }
