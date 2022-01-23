@@ -1,4 +1,4 @@
-package main
+package lb
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 type LoadBalancer struct {
 	port                  int
 	id                    uint64
-	serverPool            ServerPoolManager
+	serverPool            *ServerPoolManager
 	loadBalancingStrategy LoadBalancingStrategy
 }
 
